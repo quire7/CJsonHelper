@@ -1,0 +1,2 @@
+CJsonHelper是基于cJSON封装的一个C++版的JSON库，CJsonHelper的最大优势是轻量、简单好用，开发效率极高，尤其对多层嵌套json的读取和生成、修改极为方便，
+最为关键的一点是解析JSON和生成JSON的编码效率非常高。

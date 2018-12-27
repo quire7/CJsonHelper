@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="CJsonHelper.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="cJson\cJSON.c">
+      <Filter>cJSON</Filter>
+    </ClCompile>
+    <ClCompile Include="cJson\cJSON_Utils.c">
+      <Filter>cJSON</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CJsonHelper.h" />
+    <ClInclude Include="cJson\cJSON.h">
+      <Filter>cJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="cJson\cJSON_Utils.h">
+      <Filter>cJSON</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="cJSON">
+      <UniqueIdentifier>{419ef422-f935-4476-ac9b-8bdcfeacdc95}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
