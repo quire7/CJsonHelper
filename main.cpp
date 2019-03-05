@@ -1,4 +1,4 @@
-#include <stdlib.h>
+ï»¿#include <stdlib.h>
 #include <stdio.h>
 #include "cJSON/cJSON.h"
 #include "CJsonHelper.h"
@@ -9,16 +9,16 @@
 
 struct ShortSellBaseData
 {
-	int64_t  nStockGUID;					//¹ÉÆ±µÄGUID;
-	int      nIntDayTime;					//Ê±¼äµÄÊı×ÖĞÍ(¾«È·µ½Ìì);
-	int      nStockCode;					//¹ÉÆ±µÄÊı×ÖºÅÂë;
-	int      nTotalNum;						//µ±Ìì×ÜÊı;
-	int      nLeaveNum;						//µ±ÌìÊ£Óà;
-	int      nCharge;						//µ±Ìì¹É¼Û;
-	int      nOffsetNum;					//ÓëÉÏÒ»ÌìÏà²î¹ÉÊı;
+	int64_t  nStockGUID;					//è‚¡ç¥¨çš„GUID;
+	int      nIntDayTime;					//æ—¶é—´çš„æ•°å­—ç±»å‹(ç²¾ç¡®åˆ°å¤©);
+	int      nStockCode;					//è‚¡ç¥¨çš„æ•°å­—å·ç ;
+	int      nTotalNum;						//å½“å¤©æ€»æ•°;
+	int      nLeaveNum;						//å½“å¤©å‰©ä½™;
+	int      nCharge;						//å½“å¤©è‚¡ä»·;
+	int      nOffsetNum;					//ä¸ä¸Šä¸€å¤©ç›¸å·®è‚¡æ•°;
 	int      nPercent;						//offset_num*1000/(total_num+offset_num);
-	char     szStockName[STOCKNAME_LEN];	//¹ÉÆ±Ãû³Æ;
-	string   stockName;						//¹ÉÆ±Ãû³Æ;
+	char     szStockName[STOCKNAME_LEN];	//è‚¡ç¥¨åç§°;
+	string   stockName;						//è‚¡ç¥¨åç§°;
 };
 #ifdef WIN32
 #include <Windows.h>
@@ -40,6 +40,48 @@ string UTF8ToGBK(string &strUtf8)
 }
 #endif
 
+bool writeResultConfig()
+{
+	int finished_cities = 1;
+	int remaining_cities = 0;
+
+	CJsonHelper jsonHelper;
+	jsonHelper.set( "finished_cities", finished_cities );
+	jsonHelper.set( "remaining_cities", remaining_cities );
+
+
+	jsonHelper.addEmptySubArray("cities");
+
+	CJsonHelper* citiesJsonHelper = jsonHelper["cities"];
+
+	for (int i = 0; i < finished_cities; ++i)
+	{
+		CJsonHelper finishedCityJsonHelper;
+		finishedCityJsonHelper.set( "code", "350100" );
+		
+		string strCityNameUTF8("ç¦å·å¸‚");
+		string strCityName = UTF8ToGBK(strCityNameUTF8);
+		finishedCityJsonHelper.set( "city_name", strCityNameUTF8.c_str() );
+
+		finishedCityJsonHelper.set( "total_count", 100 );
+		finishedCityJsonHelper.set( "finished_count", 100 );
+
+		citiesJsonHelper->append( &finishedCityJsonHelper );
+	}
+
+	//æ¯æ¬¡éƒ½è¦†ç›–é‡å†™;
+	FILE* pFile = fopen("result.json", "wb+");
+	if (NULL == pFile)
+	{
+		return false;
+	}
+
+	string strFormatString = jsonHelper.toFormattedString();
+	fwrite( strFormatString.c_str(), 1, strFormatString.length(), pFile );
+	fclose( pFile );
+
+	return true;
+}
 
 int main(int argc, char** argv)
 {
@@ -174,6 +216,9 @@ int main(int argc, char** argv)
 			}
 		}
 	}
+
+	//jsonçš„å†™å…¥æ–‡ä»¶çš„ä¾‹å­;
+	writeResultConfig();
 
 	system("pause");
 	return 0;
