@@ -8,13 +8,16 @@
 
 #define CJsonHelper_ErrorMsg_Len	(256)
 
+#ifndef SNPRINTF
 #if defined(_MSC_VER) && (_MSC_VER >= 1200 )
-	#define SNPRINTF		_snprintf
+#define SNPRINTF		_snprintf
 #elif defined(__GNUC__) && (__GNUC__ >= 3 )
-	#define SNPRINTF		snprintf
+#define SNPRINTF		snprintf
 #else
-	#define SNPRINTF		snprintf
+#define SNPRINTF		snprintf
 #endif
+#endif // !SNPRINTF
+
 
 CJsonHelper::CJsonHelper():
 m_bRoot(true),
@@ -208,14 +211,18 @@ CJsonHelper* CJsonHelper::operator[](const char* szKey)
 	if ( iter != m_CJsonHelperObjRefMap.end() )
 		return (iter->second);
 	
-	if ( isEmpty() )
-		addEmptySubObject( szKey );
+	if (isEmpty())
+		return NULL; //addEmptySubObject( szKey );
 	
 	if ( !isObject() )
 		return NULL;
 
-	CJsonHelper* pJsonHelper = new CJsonHelper( cJSON_GetObjectItem( m_pJsonData, szKey ) );
-	m_CJsonHelperObjRefMap.insert( std::make_pair( szKey, pJsonHelper ) );
+	CJsonHelper* pJsonHelper = NULL;
+	cJSON *pJsonData = cJSON_GetObjectItem( m_pJsonData, szKey );
+	if ( pJsonData ) {
+		pJsonHelper = new CJsonHelper(pJsonData);
+		m_CJsonHelperObjRefMap.insert(std::make_pair(szKey, pJsonHelper));
+	}
 
 	return pJsonHelper;
 }
@@ -245,9 +252,7 @@ bool CJsonHelper::get(const char* szKey, CJsonHelper** pCJsonHelperAddr)
 {
 	if ( ( !isVaild(szKey) ) || ( !isObject() ) )	return false;
 
-	*pCJsonHelperAddr = (*this)[szKey];
-
-	return true;
+	return ( NULL != ( *pCJsonHelperAddr = (*this)[szKey] ) );
 }
 
 bool CJsonHelper::get(const char* szKey, string& strValue) const
@@ -256,7 +261,7 @@ bool CJsonHelper::get(const char* szKey, string& strValue) const
 
 	strValue = (*this)(szKey);
 
-	return true;
+	return (!strValue.empty());
 }
 
 bool CJsonHelper::get(const char* szKey, char* szValue, int nBufLen) const
@@ -433,8 +438,8 @@ CJsonHelper* CJsonHelper::operator[]( int uiWhich )
 	if (iterFind != m_CJsonHelperArrayRefMap.end())
 		return iterFind->second;
 
-	if ( isEmpty() )
-		m_pJsonData = cJSON_CreateArray();
+	if (isEmpty())
+		return NULL; //m_pJsonData = cJSON_CreateArray();
 
 	if ( !isArrayItem(uiWhich) )
 		return NULL;
@@ -480,7 +485,7 @@ bool CJsonHelper::get(int uiWhich, string& strValue) const
 
 	strValue = (*this)(uiWhich);
 
-	return true;
+	return (!strValue.empty());
 }
 
 bool CJsonHelper::get(int uiWhich, char* szValue, int nBufLen) const

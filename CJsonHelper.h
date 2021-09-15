@@ -1,3 +1,12 @@
+/********************************************************************
+created:	2014/10/01
+filename: 	CJsonHelper.h
+file base:	CJsonHelper
+purpose:	cJSON library c++ encapsulation;
+author:		fanxiangdong;
+mail:		fanxiangdong7@126.com;
+qq:			435337751;
+*********************************************************************/
 #ifndef __CJSON_HELPER_H__
 #define __CJSON_HELPER_H__
 
@@ -11,6 +20,8 @@ using std::map;
 #if defined(__GNUC__) || (defined(_MSC_VER) && _MSC_VER >= 1600)
 	// Compilers supporting C99 or C++0x have stdint.h defining these integer types
 	#include <stdint.h>
+	#include <inttypes.h>
+	#define __STDC_FORMAT_MACROS
 #elif defined(_MSC_VER)
 	typedef   signed __int64  int64_t;
 	typedef unsigned __int64 uint64_t;
